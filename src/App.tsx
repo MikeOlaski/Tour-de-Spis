@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { APIProvider, Map, useMap, useMapsLibrary, Polyline, Marker } from '@vis.gl/react-google-maps';
-import { MapPin, Route, Bike, ArrowRightLeft, Info, AlertTriangle, Compass, Mountain, Map as MapIcon, Send, Mic, Square, MessageSquare, ListTree, SlidersHorizontal, ChevronDown, ChevronUp } from 'lucide-react';
+import { MapPin, Route, Bike, ArrowRightLeft, Info, AlertTriangle, Compass, Mountain, Map as MapIcon, Send, Mic, Square, MessageSquare, ListTree, SlidersHorizontal, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
 import { findUniquePaths, TrailSegment } from './services/discoveryService.ts';
+import VisionExplorer from './components/VisionExplorer.tsx';
 
 const SPIS_DESTINATIONS = [
   'Poprad',
@@ -91,6 +92,7 @@ function Directions({
 }
 
 export default function App() {
+  const [viewMode, setViewMode] = useState<'map' | 'vision'>('map');
   const [origin, setOrigin] = useState(SPIS_DESTINATIONS[0]);
   const [destination, setDestination] = useState(SPIS_DESTINATIONS[5]);
   const [activeOrigin, setActiveOrigin] = useState('');
@@ -157,7 +159,7 @@ export default function App() {
   const [tourType, setTourType] = useState<'single' | 'multiday'>('single');
   const [showPreferences, setShowPreferences] = useState(false);
 
-  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
+  const apiKey = (import.meta as any).env.VITE_GOOGLE_MAPS_API_KEY || '';
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -200,21 +202,67 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-[#f8fafc] overflow-hidden font-sans text-slate-900">
-      {/* Sidebar Panel */}
-      <div className="w-full md:w-80 flex flex-col h-1/2 md:h-full bg-white border-r border-slate-200 shadow-lg z-20">
-        
-        {/* Header */}
-        <div className="p-4 border-b border-slate-100 bg-white">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center text-white">
-              <Bike className="w-5 h-5" />
-            </div>
-            <h1 className="font-bold text-lg tracking-tight">Spiš Bike Routes</h1>
+    <div className="flex flex-col h-screen overflow-hidden font-sans bg-[#f8fafc] text-slate-900">
+      {/* Global Top Nav Header */}
+      <header className="flex-shrink-0 bg-white border-b border-slate-200 px-5 py-3 flex items-center justify-between shadow-sm z-30">
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 bg-emerald-600 rounded-xl flex items-center justify-center text-white shadow-md shadow-emerald-600/10">
+            <Bike className="w-5 h-5" />
           </div>
-          <p className="text-slate-500 text-xs mb-3">
-            Discover the best cycling paths across the historic Spiš region of Slovakia.
-          </p>
+          <div>
+            <h1 className="font-extrabold text-base tracking-tight text-slate-900">Spiš Bike Routes</h1>
+            <p className="text-[10px] text-slate-500 font-medium">Slovakia Outdoor Navigation Portal</p>
+          </div>
+        </div>
+
+        {/* View Mode Toggle Buttons */}
+        <div className="flex bg-slate-100 p-1 rounded-lg border border-slate-200/40">
+          <button
+            onClick={() => setViewMode('map')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-md transition-all ${
+              viewMode === 'map'
+                ? 'bg-white text-emerald-700 shadow-sm'
+                : 'text-slate-500 hover:text-slate-700'
+            }`}
+          >
+            <Compass className="w-3.5 h-3.5" />
+            Interactive Map & Chat
+          </button>
+          <button
+            onClick={() => setViewMode('vision')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-md transition-all ${
+              viewMode === 'vision'
+                ? 'bg-white text-emerald-700 shadow-sm'
+                : 'text-slate-500 hover:text-slate-700'
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
+            AI Vision Map Scanner
+          </button>
+        </div>
+
+        {/* Small decorative indicator */}
+        <div className="hidden sm:flex items-center gap-2">
+          <span className="flex h-2 w-2 relative">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </span>
+          <span className="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Active Agent Connection</span>
+        </div>
+      </header>
+
+      {/* Main Content Area */}
+      <div className="flex-1 overflow-hidden">
+        {viewMode === 'map' ? (
+          <div className="flex flex-col md:flex-row h-full overflow-hidden">
+            {/* Sidebar Panel */}
+            <div className="w-full md:w-80 flex flex-col h-1/2 md:h-full bg-white border-r border-slate-200 shadow-lg z-20">
+              
+              {/* Header */}
+              <div className="p-4 border-b border-slate-100 bg-white">
+                <p className="text-slate-500 text-xs mb-3">
+                  Discover the best cycling paths across the historic Spiš region of Slovakia.
+                </p>
           
           {/* Mode Toggle */}
           <div className="flex rounded-md bg-slate-100 p-1">
@@ -622,5 +670,10 @@ export default function App() {
         </div>
       </div>
     </div>
+  ) : (
+    <VisionExplorer />
+  )}
+</div>
+</div>
   );
 }
