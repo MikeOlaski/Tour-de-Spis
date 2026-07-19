@@ -2,5 +2,7 @@
   "name": "Spiš Bike Routes",
   "description": "Find bikeable paths between cities in the Spiš region of Slovakia using Google Maps.",
   "requestFramePermissions": [],
-  "majorCapabilities": []
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

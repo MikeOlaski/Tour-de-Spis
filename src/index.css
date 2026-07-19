@@ -1,1 +1,36 @@
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+@keyframes laser-scan {
+  0% { top: 0%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+@keyframes infinite-loading {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -40;
+  }
+}
+
+.animate-laser-scan {
+  animation: laser-scan 3s linear infinite;
+}
+
+.animate-infinite-loading {
+  animation: infinite-loading 1.5s ease-in-out infinite;
+}
+
+.animate-dash {
+  stroke-dasharray: 8, 8;
+  animation: dash 5s linear infinite;
+}
